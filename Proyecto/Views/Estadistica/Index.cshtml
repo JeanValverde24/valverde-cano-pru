@@ -1,0 +1,117 @@
+﻿@model Proyecto.Models.DatosEstadisticas
+
+@{
+    ViewData["Title"] = "Estadísticas";
+}
+
+<h2 class="text-center my-4">Estadísticas del Negocio</h2>
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center">Visitas al Perfil por Semana</h3>
+                    <canvas id="graficoVisitas" width="400" height="200"></canvas>
+                    <button id="btnVerDetallesVisitas" class="btn btn-outline-primary w-100 mt-3">Ver Detalles</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center">Intentos de Contacto Exitosos</h3>
+                    <canvas id="graficoContactos" width="400" height="200"></canvas>
+                    <button id="btnVerDetallesContactos" class="btn btn-outline-primary w-100 mt-3">Ver Detalles</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center">Tendencia de Ventas</h3>
+                    <canvas id="graficoVentas" width="400" height="200"></canvas>
+                    <button id="btnVerDetallesVentas" class="btn btn-outline-primary w-100 mt-3">Ver Detalles</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mensajeExito" class="alert alert-success text-center" style="display:none;">
+        Informe descargado exitosamente.
+    </div>
+
+    <div class="text-center">
+        <button id="btnDescargarInforme" class="btn btn-primary">Descargar Informe</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const visitasPorSemana = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.VisitasPorSemana));
+        const ventasPorMes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.VentasPorMes));
+
+        // Configuración de los gráficos
+        const ctxVisitas = document.getElementById('graficoVisitas').getContext('2d');
+        new Chart(ctxVisitas, {
+            type: 'bar',
+            data: {
+                labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4', 'Semana 5'],
+                datasets: [{
+                    label: 'Visitas',
+                    data: visitasPorSemana,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const ctxVentas = document.getElementById('graficoVentas').getContext('2d');
+        new Chart(ctxVentas, {
+            type: 'line',
+            data: {
+                labels: ['Mes 1', 'Mes 2', 'Mes 3', 'Mes 4'],
+                datasets: [{
+                    label: 'Ventas',
+                    data: ventasPorMes,
+                    fill: false,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    tension: 0.1
+                }]
+            }
+        });
+
+        // Lógica para descargar el informe
+        $('#btnDescargarInforme').click(function () {
+            const formato = prompt("Ingrese el formato deseado (pdf/excel):");
+            if (formato) {
+                window.location.href = '@Url.Action("DescargarInforme", "Estadisticas")' + '?formato=' + formato;
+            }
+        });
+
+        // Manejo de los botones "Ver Detalles"
+        $('#btnVerDetallesVisitas').click(function () {
+            // Implementar lógica para mostrar detalles de visitas
+        });
+
+        $('#btnVerDetallesContactos').click(function () {
+            // Implementar lógica para mostrar detalles de contactos
+        });
+
+        $('#btnVerDetallesVentas').click(function () {
+            // Implementar lógica para mostrar detalles de ventas
+        });
+    </script>
+}
